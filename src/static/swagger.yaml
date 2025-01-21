@@ -1,0 +1,75 @@
+openapi: 3.0.0
+info:
+  title: Text Summarization Service Swagger API Documentation
+  version: 1.0.0
+
+paths:
+  /text/store_document:
+    post:
+      summary: Store a new text document to the database along with its summary
+      description: Store a new text document to the database along with its summary
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+      responses:
+        '201':
+          description: Document saved to the databasee
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  document_id:
+                    type: string
+        '400':
+          description: Required field text is missing
+        '500':
+          description: Internal server error
+
+  /text/get_summary/{document_id}:
+    get:
+      summary: Retrieve the summary of a document from the database using its document id
+      description: Retrieve the summary of a document from the database using its document id
+      parameters:
+        - name: document_id
+          in: path
+          required: true
+          description: Unique identifier of the document that is stored in the database
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved the document summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  document_id:
+                    type: string
+                  summary:
+                    type: string
+        '400':
+          description: Bad request error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: An unexpected error occurred while retrieving the document summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
