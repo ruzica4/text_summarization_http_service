@@ -1,5 +1,8 @@
 # HTTP REST API Service To Summarize Large English Sentences
 
+## Introduction
+This HTTP service provides a feature to summarize long English text. Users can send text to an endpoint, receive a unique document ID where the summarization is saved in the database, and retrieve the summarized version of the text using the same ID.
+
 ## Getting Started
 To run the service:
 
