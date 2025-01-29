@@ -1,9 +1,12 @@
 import os
 from flask import Flask, jsonify
 from http import HTTPStatus
+from flask_swagger_ui import get_swaggerui_blueprint
+from dotenv import load_dotenv
 
 from config import Config, DevelopmentConfig, TestingConfig
 from routes import text_routes
+from services import Database
 from utilities.utility_functions import swagger_ui_setup
 
 
@@ -13,11 +16,16 @@ def create_app(config_class=Config):
     """
     app = Flask(__name__)
     app.config.from_object(config_class)
+    app.config["DATABASE"] = Database(app.config["MONGODB_URI"])
 
-    swaggerui_blueprint = swagger_ui_setup(app)
+    swagger_ui_blueprint = get_swaggerui_blueprint(
+        app.config["SWAGGER_URL"],
+        app.config["SWAGGER_UI_LOCATION"],
+        config={"app_name": "TextSummarizationApp"},
+    )
 
     app.register_blueprint(text_routes, url_prefix="/text")
-    app.register_blueprint(swaggerui_blueprint, url_prefix=app.config["SWAGGER_URL"])
+    app.register_blueprint(swagger_ui_blueprint, url_prefix=app.config["SWAGGER_URL"])
 
     @app.errorhandler(404)
     def handle_404(e):
@@ -37,17 +45,16 @@ def create_app(config_class=Config):
 
 
 if __name__ == "__main__":
-    environement = os.getenv("FLASK_ENV", "development")
+    load_dotenv()
+    environment = os.getenv("FLASK_ENV", "development")
 
     config_mapping = {
         "development": DevelopmentConfig,
         "testing": TestingConfig,
     }
 
-    config_class = config_mapping.get(environement)
-
-    if not config_class:
-        raise ValueError(f"Unknown FLASK_ENV: {environement}")
+    config_class = config_mapping.get(environment)
+    config_class = config_mapping.get(environment, DevelopmentConfig)
 
     app = create_app(config_class)
     app.run(host="0.0.0.0", port=5000)
