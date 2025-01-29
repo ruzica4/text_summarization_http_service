@@ -11,7 +11,7 @@ nlp = spacy.load("en_core_web_sm")
 lemmatizer = WordNetLemmatizer()
 
 
-def create_summary_from_given_text(input_text, threshold_multiplier=1.3):
+def create_summary_from_given_text(input_text: str, threshold_multiplier: float = 1.3) -> str:
     """
     Summarize the given text using Tf-Idf scoring.
     """
